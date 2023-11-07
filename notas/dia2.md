@@ -126,3 +126,26 @@ La búsqueda por position se hace en cada nivel
 /html/body/header/div/a
 
 //h1[contains(text(),'CURA Healthcare Service')]
+
+# Cucumber (pepino)
+
+Es una herramienta alternativa a unittest
+
+De hecho es una herramienta que tengo disponible para 
+- Java
+- Ruby
+- Javascript
+- Python
+- ...
+
+Al trabajar con cucumber vamos a escribir unos ficheros en un lenguaje especial, llamado GHERKIN (pepinillo)
+
+El lenguaje GHERKIN no es tal.... sino solo un conjunto de restricciones que aplicamos sobre lenguajes naturales (los que hablamos los seres humanos)
+
+Podéis elegir el lenguaje humano que queráis:
+- Inglés
+- Español
+- Catalán
+- Asturiano
+- Aragonés
+- Emojis

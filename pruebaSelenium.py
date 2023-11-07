@@ -24,9 +24,26 @@ class MiClaseDePruebas(unittest.TestCase):
         self.capturar("capturas/login_ok/captura_antes_login_ok.png")
         self.navegador.find_element(By.ID,"btn-login")                                             .click()
         texto=self.navegador.find_element(By.XPATH,"//section[@id='appointment']//h2")             .text
-        self.capturar("capturas/loginok/captura_despues_login_ok.png")
+        self.capturar("capturas/login_ok/captura_despues_login_ok.png")
         # COMPROBACION DE QUE EL TEXTO ES EL ESPERADO
         self.assertEqual(texto,"Make Appointment")
+
+    def test_login_nok(self):
+        """Login con datos correctos"""
+        # Vete a una página concreta en el navegador
+        self.navegador.get("https://katalon-demo-cura.herokuapp.com/")
+        # Busca un elemento                                                 # Sobre ese elemento ejecuta una acción
+        self.navegador.find_element(By.ID,"btn-make-appointment")                                  .click()
+        self.navegador.find_element(By.ID,"txt-username")                                          .clear()
+        self.navegador.find_element(By.ID,"txt-username")                                          .send_keys("John Doe")
+        self.navegador.find_element(By.ID,"txt-password")                                          .clear()
+        self.navegador.find_element(By.ID,"txt-password")                                          .send_keys("RUINA")
+        self.capturar("capturas/login_nok/captura_antes_login_nok.png")
+        self.navegador.find_element(By.ID,"btn-login")                                             .click()
+        elemento=self.navegador.find_element(By.XPATH,'//section[@id="login"]//*[contains(text(),"Login failed!")] | //*[contains(@class,"text-danger")]')
+        # COMPROBACION DE QUE EL TEXTO ES EL ESPERADO
+        self.capturar("capturas/login_nok/captura_despues_login_nok.png")
+        self.assertIsNotNone(elemento)
 
     def tearDown(self):
         # Cierra el navegador
