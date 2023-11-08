@@ -2,6 +2,23 @@ from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+import chromedriver_autoinstaller
+
+# hook de behave. Son funciones que de existir, behave ejecuta automaticamente en distintos momentos
+# Ejemplos:
+# before_all: Se ejecuta antes de comenzar la ejecución de todas las pruebas
+# before_feature: Se ejecuta antes de comenzar la ejecución de cada feature
+# before_scenario: Se ejecuta antes de comenzar la ejecución de cada scenario
+# before_step: Se ejecuta antes de comenzar la ejecución de cada step
+# after_step: Se ejecuta después de terminar la ejecución de cada step
+# after_scenario: Se ejecuta después de terminar la ejecución de cada scenario
+# after_feature: Se ejecuta después de terminar la ejecución de cada feature
+# after_all: Se ejecuta después de terminar la ejecución de todas las pruebas
+
+def before_all(context):
+    chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
+                                          # and if it doesn't exist, download it automatically,
+                                          # then add chromedriver to path
 
 def capturar(navegador,carpeta, nombre_captura):
     # Voy a tomar la ruta del nombre del archivo de captura
@@ -9,6 +26,15 @@ def capturar(navegador,carpeta, nombre_captura):
     # Creo esa carpeta dentro de la carpeta "capturas"
     crear_carpeta(os.path.join("capturas", carpeta))
     navegador.get_screenshot_as_file(os.path.join("capturas", carpeta, nombre_captura))
+
+def capturar_elemento(elemento,carpeta, nombre_captura):
+    if(elemento.size["height"]==0 or elemento.size["width"]==0):
+        return
+    # Voy a tomar la ruta del nombre del archivo de captura
+    import os
+    # Creo esa carpeta dentro de la carpeta "capturas"
+    crear_carpeta(os.path.join("capturas", carpeta))
+    elemento.screenshot(os.path.join("capturas", carpeta, nombre_captura))
 
 def crear_carpeta(carpeta):
     import os
@@ -66,4 +92,17 @@ def login_ok(context):
     context.navegador.find_element(By.ID,"txt-password").send_keys("ThisIsNotAPassword")
     context.navegador.find_element(By.ID,"btn-login").click()
 
-# context.scenario.name
+@then('localizar los elementos con xpath "{xpath}"')
+def localizar_elementos(context, xpath):
+    context.elementos=context.navegador.find_elements(By.XPATH,xpath)
+
+@then('sacar foto de cada elemento localizado')
+def localizar_elementos(context):
+    numero_elemento = 1
+    for elemento in context.elementos:
+        capturar_elemento(elemento,context.scenario.name, "elemento_"+str(numero_elemento)+".png")
+        numero_elemento += 1
+    
+
+def after_scenario(context, scenario):
+    context.navegador.quit()

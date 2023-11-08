@@ -1,10 +1,10 @@
 #language:es
-
+@login
 Característica: Pantalla de login de mi sistema
 
     Antecedentes:
-        #Dado        Que tengo un navegador abierto
-        Dado        Que tengo un navegador abierto en modo headless
+        Dado        Que tengo un navegador abierto
+        #Dado        Que tengo un navegador abierto en modo headless
         Cuando      Entro a la página de mi aplicación: "https://katalon-demo-cura.herokuapp.com"
         Y           Hago click en el botón con id "btn-make-appointment"
 
