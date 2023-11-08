@@ -1,6 +1,7 @@
 from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import os
 
 import chromedriver_autoinstaller
 
@@ -22,7 +23,6 @@ def before_all(context):
 
 def capturar(navegador,carpeta, nombre_captura):
     # Voy a tomar la ruta del nombre del archivo de captura
-    import os
     # Creo esa carpeta dentro de la carpeta "capturas"
     crear_carpeta(os.path.join("capturas", carpeta))
     navegador.get_screenshot_as_file(os.path.join("capturas", carpeta, nombre_captura))
@@ -31,13 +31,11 @@ def capturar_elemento(elemento,carpeta, nombre_captura):
     if(elemento.size["height"]==0 or elemento.size["width"]==0):
         return
     # Voy a tomar la ruta del nombre del archivo de captura
-    import os
     # Creo esa carpeta dentro de la carpeta "capturas"
     crear_carpeta(os.path.join("capturas", carpeta))
     elemento.screenshot(os.path.join("capturas", carpeta, nombre_captura))
 
 def crear_carpeta(carpeta):
-    import os
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
 
@@ -102,7 +100,34 @@ def localizar_elementos(context):
     for elemento in context.elementos:
         capturar_elemento(elemento,context.scenario.name, "elemento_"+str(numero_elemento)+".png")
         numero_elemento += 1
-    
+
+@then('remarcar elemento localizado')
+def remarcar_elemento(context):
+    css_styles={
+        "border": '3px solid red'
+    }
+    for style in css_styles:
+        context.navegador.execute_script("arguments[0].style."+style+"='"+css_styles[style]+"'", context.elemento)
+        # ejecutando código js dentro de la página
+
+@then('sacar foto del elemento localizado llamada "{nombre_foto}"')
+def sacar_foto_del_elemento_localizado(context,nombre_foto):
+    # Asegurar que el elemento queda lo más centrado posible en la página
+    context.navegador.execute_script("arguments[0].scrollIntoView();", context.elemento)
+    capturar_elemento_centrado(context, nombre_foto)
+
+def capturar_elemento_centrado(context, nombre_foto):
+    # Sacar foto de la página
+    capturar(context.navegador,context.scenario.name, nombre_foto+".tmp.png")
+    from PIL import Image
+    captura = Image.open(os.path.join("capturas",context.scenario.name,nombre_foto+".tmp.png"))
+    left = max(context.elemento.location["x"] - 50,0)
+    top = max(context.elemento.location["y"] - 50,0)
+    right = min(context.elemento.location["x"] + context.elemento.size["width"] + 50, captura.size[0])
+    bottom = min(context.elemento.location["y"] + context.elemento.size["height"] + 50, captura.size[1])
+    captura = captura.crop((left, top, right, bottom))
+    captura.save(os.path.join("capturas",context.scenario.name,nombre_foto+".png"))
+    os.remove(os.path.join("capturas",context.scenario.name,nombre_foto+".tmp.png"))
 
 def after_scenario(context, scenario):
     context.navegador.quit()
