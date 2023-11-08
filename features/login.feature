@@ -11,8 +11,10 @@ Característica: Pantalla de login de mi sistema
     Escenario:  Hacer login con datos correctos
         Cuando      Escribo "John Doe" en el campo con id "txt-username"
         Y           Escribo "ThisIsNotAPassword" en el campo con id "txt-password"
+        Y           capturo la pantalla y la nombro "antes_del_login.png"
         Y           Hago click en el botón con id "btn-login"
         Entonces    Debería encontrar un elemento con XPATH "//section[@id="appointment"]//h2"
+        Y           capturo la pantalla y la nombro "despues_del_login.png"
         Y           el elemento debería contener tener el texto "Make Appointment"
 
     Escenario:  Hacer login sin nombre

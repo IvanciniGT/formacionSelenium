@@ -1,0 +1,4 @@
+pip3 install behave-html-formatter
+/Users/ivan/Library/Python/3.9/bin/behave $1 $2 $3 $4 $5 $6 $7 $8 $9 --format behave_html_formatter:HTMLFormatter -o reposts/report.html
+
+

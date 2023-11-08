@@ -2,6 +2,25 @@ from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+
+def capturar(navegador,carpeta, nombre_captura):
+    # Voy a tomar la ruta del nombre del archivo de captura
+    import os
+    # Creo esa carpeta dentro de la carpeta "capturas"
+    crear_carpeta(os.path.join("capturas", carpeta))
+    navegador.get_screenshot_as_file(os.path.join("capturas", carpeta, nombre_captura))
+
+def crear_carpeta(carpeta):
+    import os
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
+
+@given('capturo la pantalla y la nombro "{nombre_captura}"')
+@when('capturo la pantalla y la nombro "{nombre_captura}"')
+@then('capturo la pantalla y la nombro "{nombre_captura}"')
+def navegador_abierto(context, nombre_captura):
+    capturar(context.navegador,context.scenario.name, nombre_captura)
+
 @given("Que tengo un navegador abierto")
 def navegador_abierto(context):
     context.navegador = webdriver.Chrome()
@@ -11,10 +30,8 @@ def navegador_abierto(context):
 def navegador_abierto(context):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--headless")
-
     context.navegador = webdriver.Chrome(options=chrome_options)
     context.navegador.implicitly_wait(30)
-
 
 @when('Entro a la página de mi aplicación: "{url}"')
 def entro_a_pagina(context, url):
@@ -30,12 +47,9 @@ def escribo_en_campo(context, texto, id):
     elemento.clear()
     elemento.send_keys(texto)
 
-
 @then('el elemento debería contener tener el texto "{texto}"')
 def comprobar_subtitulo(context,texto):
     assert context.elemento.text == texto
-
-
 
 @then('Debería encontrar un elemento con XPATH "{xpath}"')
 def comprobar_subtitulo(context, xpath):
@@ -51,3 +65,5 @@ def login_ok(context):
     context.navegador.find_element(By.ID,"txt-password").clear()
     context.navegador.find_element(By.ID,"txt-password").send_keys("ThisIsNotAPassword")
     context.navegador.find_element(By.ID,"btn-login").click()
+
+# context.scenario.name
